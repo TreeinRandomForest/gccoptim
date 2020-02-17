@@ -1,0 +1,106 @@
+<?xml version="1.0"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!--Phoronix Test Suite v9.4.0m2 [ http://www.phoronix-test-suite.com/ ]-->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" font-family="sans-serif, droid-sans, helvetica, verdana, tahoma" viewbox="0 0 707 413" width="707" height="413" preserveAspectRatio="xMinYMin meet">
+  <rect x="0" y="0" width="707" height="413" fill="#FEFEFE" stroke="#757575" stroke-width="2"/>
+  <rect x="2" y="1" width="704" height="38" fill="#231f20" stroke="#757575" stroke-width="1"/>
+  <text x="353.5" y="19" font-size="17" fill="#FEFEFE" text-anchor="middle" font-weight="bold">2020-02-14-0059</text>
+  <a xlink:href="https://www.phoronix-test-suite.com/" xlink:show="new">
+    <text x="4" y="36" font-size="8" fill="#FEFEFE" text-anchor="start" xlink:show="new" font-weight="bold">PHORONIX-TEST-SUITE.COM</text>
+  </a>
+  <a xlink:href="https://www.phoronix-test-suite.com/" xlink:show="new">
+    <text x="703" y="36" font-size="8" fill="#FEFEFE" text-anchor="end" xlink:show="new" font-weight="bold">Phoronix Test Suite 9.4.0m2</text>
+  </a>
+  <g fill="#949494">
+    <rect x="0" y="55" width="707" height="16"/>
+    <rect x="0" y="87" width="707" height="16"/>
+    <rect x="0" y="119" width="707" height="16"/>
+    <rect x="0" y="151" width="707" height="16"/>
+    <rect x="0" y="183" width="707" height="16"/>
+    <rect x="0" y="215" width="707" height="16"/>
+  </g>
+  <g fill="none" stroke-width="1" stroke="#005a00"/>
+  <g font-size="10" fill="#065695" text-anchor="middle" font-weight="bold">
+    <a xlink:href="http://openbenchmarking.org/s/Intel Core i7-8700K @ 4.00GHz (6 Cores / 12 Threads)" xlink:show="new">
+      <text x="353.5" y="52" xlink:title="Processor: Intel Core i7-8700K @ 4.00GHz (6 Cores / 12 Threads)">Intel Core i7-8700K @ 4.00GHz (6 Cores / 12 Threads)</text>
+    </a>
+    <a xlink:href="http://openbenchmarking.org/s/ASUS ROG STRIX Z370-E GAMING (0430 BIOS)" xlink:show="new">
+      <text x="353.5" y="68" xlink:title="Motherboard: ASUS ROG STRIX Z370-E GAMING (0430 BIOS)">ASUS ROG STRIX Z370-E GAMING (0430 BIOS)</text>
+    </a>
+    <a xlink:href="http://openbenchmarking.org/s/48GB" xlink:show="new">
+      <text x="353.5" y="84" xlink:title="Memory: 48GB">48GB</text>
+    </a>
+    <a xlink:href="http://openbenchmarking.org/s/1024GB Samsung SSD 970 PRO 1TB + 2000GB Seagate ST2000DX001-1CM1 + 500GB Samsung SSD 860" xlink:show="new">
+      <text x="353.5" y="100" xlink:title="Disk: 1024GB Samsung SSD 970 PRO 1TB + 2000GB Seagate ST2000DX001-1CM1 + 500GB Samsung SSD 860">1024GB Samsung SSD 970 PRO 1TB + 2000GB Seagate ST2000DX001-1CM1 + 500GB Samsung SSD 860</text>
+    </a>
+    <a xlink:href="http://openbenchmarking.org/s/i915drmfb" xlink:show="new">
+      <text x="353.5" y="116" xlink:title="Graphics: i915drmfb">i915drmfb</text>
+    </a>
+    <a xlink:href="http://openbenchmarking.org/s/U32J59x" xlink:show="new">
+      <text x="353.5" y="132" xlink:title="Monitor: U32J59x">U32J59x</text>
+    </a>
+    <a xlink:href="http://openbenchmarking.org/s/Fedora 31" xlink:show="new">
+      <text x="353.5" y="148" xlink:title="OS: Fedora 31">Fedora 31</text>
+    </a>
+    <a xlink:href="http://openbenchmarking.org/s/5.4.14-100.fc30.x86_64 (x86_64)" xlink:show="new">
+      <text x="353.5" y="164" xlink:title="Kernel: 5.4.14-100.fc30.x86_64 (x86_64)">5.4.14-100.fc30.x86_64 (x86_64)</text>
+    </a>
+    <a xlink:href="http://openbenchmarking.org/s/GCC 9.2.1 20190827" xlink:show="new">
+      <text x="353.5" y="180" xlink:title="Compiler: GCC 9.2.1 20190827">GCC 9.2.1 20190827</text>
+    </a>
+    <a xlink:href="http://openbenchmarking.org/s/overlayfs" xlink:show="new">
+      <text x="353.5" y="196" xlink:title="File-System: overlayfs">overlayfs</text>
+    </a>
+    <a xlink:href="http://openbenchmarking.org/s/3840x2160" xlink:show="new">
+      <text x="353.5" y="212" xlink:title="Screen Resolution: 3840x2160">3840x2160</text>
+    </a>
+    <a xlink:href="http://openbenchmarking.org/s/Docker" xlink:show="new">
+      <text x="353.5" y="228" xlink:title="System Layer: Docker">Docker</text>
+    </a>
+  </g>
+  <g font-size="7" fill="#065695" text-anchor="end">
+    <text x="703" y="48">Processor</text>
+    <text x="703" y="64">Motherboard</text>
+    <text x="703" y="80">Memory</text>
+    <text x="703" y="96">Disk</text>
+    <text x="703" y="112">Graphics</text>
+    <text x="703" y="128">Monitor</text>
+    <text x="703" y="144">OS</text>
+    <text x="703" y="160">Kernel</text>
+    <text x="703" y="176">Compiler</text>
+    <text x="703" y="192">File-System</text>
+    <text x="703" y="208">Screen Resolution</text>
+    <text x="703" y="224">System Layer</text>
+  </g>
+  <g stroke="#757575" stroke-width="1">
+    <line x1="0" y1="39" x2="707" y2="39"/>
+    <line x1="0" y1="55" x2="707" y2="55"/>
+    <line x1="0" y1="71" x2="707" y2="71"/>
+    <line x1="0" y1="87" x2="707" y2="87"/>
+    <line x1="0" y1="103" x2="707" y2="103"/>
+    <line x1="0" y1="119" x2="707" y2="119"/>
+    <line x1="0" y1="135" x2="707" y2="135"/>
+    <line x1="0" y1="151" x2="707" y2="151"/>
+    <line x1="0" y1="167" x2="707" y2="167"/>
+    <line x1="0" y1="183" x2="707" y2="183"/>
+    <line x1="0" y1="199" x2="707" y2="199"/>
+    <line x1="0" y1="215" x2="707" y2="215"/>
+  </g>
+  <rect x="1" y="231" width="705" height="182" fill="#231f20"/>
+  <text x="4" y="252" font-size="9" fill="#FEFEFE" text-anchor="start" width="703">- CFLAGS="-frecord-gcc-switches @/store/PARAMS"</text>
+  <text x="4" y="264" font-size="9" fill="#FEFEFE" text-anchor="start" xlink:title="">
+    <tspan x="4" y="264" dx="0" dy="0">- --build=x86_64-redhat-linux --disable-libunwind-exceptions --enable-__cxa_atexit --enable-bootstrap --enable-cet</tspan>
+    <tspan x="4" y="264" dx="5" dy="10"> --enable-checking=release --enable-gnu-indirect-function --enable-gnu-unique-object --enable-initfini-array</tspan>
+    <tspan x="4" y="264" dx="5" dy="20"> --enable-languages=c,c++,fortran,objc,obj-c++,ada,go,d,lto --enable-multilib --enable-offload-targets=nvptx-none</tspan>
+    <tspan x="4" y="264" dx="5" dy="30"> --enable-plugin --enable-shared --enable-threads=posix --mandir=/usr/share/man --with-arch_32=i686</tspan>
+    <tspan x="4" y="264" dx="5" dy="40"> --with-gcc-major-version-only --with-isl --with-linker-hash-style=gnu --with-tune=generic --without-cuda-driver </tspan>
+  </text>
+  <text x="4" y="319" font-size="9" fill="#FEFEFE" text-anchor="start" width="703">- Scaling Governor: intel_pstate powersave - CPU Microcode: 0xca</text>
+  <text x="4" y="331" font-size="9" fill="#FEFEFE" text-anchor="start" xlink:title="">
+    <tspan x="4" y="331" dx="0" dy="0">- itlb_multihit: KVM: Mitigation of Split huge pages + l1tf: Mitigation of PTE Inversion; VMX: conditional cache flushes SMT</tspan>
+    <tspan x="4" y="331" dx="5" dy="10"> vulnerable + mds: Mitigation of Clear buffers; SMT vulnerable + meltdown: Mitigation of PTI + spec_store_bypass: Mitigation of</tspan>
+    <tspan x="4" y="331" dx="5" dy="20"> SSB disabled via prctl and seccomp + spectre_v1: Mitigation of usercopy/swapgs barriers and __user pointer sanitization +</tspan>
+    <tspan x="4" y="331" dx="5" dy="30"> spectre_v2: Mitigation of Full generic retpoline IBPB: conditional IBRS_FW STIBP: conditional RSB filling + tsx_async_abort:</tspan>
+    <tspan x="4" y="331" dx="5" dy="40"> Mitigation of Clear buffers; SMT vulnerable </tspan>
+  </text>
+</svg>

@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!--Phoronix Test Suite v9.4.0m2 [ http://www.phoronix-test-suite.com/ ]-->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" font-family="sans-serif, droid-sans, helvetica, verdana, tahoma" viewbox="0 0 225 169" width="225" height="169" preserveAspectRatio="xMinYMin meet">
+  <rect x="0" y="0" width="225" height="169" fill="#FEFEFE" stroke="#757575" stroke-width="2"/>
+  <rect x="1" y="1" width="224" height="168" fill="#FEFEFE" stroke="#757575" stroke-width="1"/>
+  <path d="m74 22v9m-5-16v16m-5-28v28m-23-2h12.5c2.485281 0 4.5-2.014719 4.5-4.5s-2.014719-4.5-4.5-4.5h-8c-2.485281 0-4.5-2.014719-4.5-4.5s2.014719-4.5 4.5-4.5h12.5m-21 5h-11m11 13h-2c-4.970563 0-9-4.029437-9-9v-20m-24 40v-20c0-4.970563 4.0294373-9 9-9 4.970563 0 9 4.029437 9 9s-4.029437 9-9 9h-9" stroke="#000000" stroke-width="4" fill="none" transform="translate(10,28)"/>
+  <line x1="99" y1="89" x2="225" y2="89" stroke="#BABABA" stroke-width="128" stroke-dasharray="126,126"/>
+  <line x1="113" y1="73" x2="113" y2="153" stroke="#949494" stroke-width="225" stroke-dasharray="16,16"/>
+  <line x1="99" y1="89" x2="225" y2="89" stroke="#757575" stroke-width="128" stroke-dasharray="1,125"/>
+  <rect x="1" y="1" width="223" height="25" fill="#231f20"/>
+  <text x="5" y="19" font-size="17" fill="#FEFEFE" text-anchor="start">2020-02-14-0059</text>
+  <line x1="1" y1="25" x2="224" y2="25" stroke="#757575" stroke-width="1"/>
+  <g font-size="10" font-weight="bold" fill="#065695" text-anchor="end">
+    <a xlink:href="https://openbenchmarking.org/test/pts/redis-1.2.0" xlink:show="new">
+      <text x="97" y="85">redis: LPOP</text>
+    </a>
+    <a xlink:href="https://openbenchmarking.org/test/pts/redis-1.2.0" xlink:show="new">
+      <text x="97" y="101">redis: SADD</text>
+    </a>
+    <a xlink:href="https://openbenchmarking.org/test/pts/redis-1.2.0" xlink:show="new">
+      <text x="97" y="117">redis: LPUSH</text>
+    </a>
+    <a xlink:href="https://openbenchmarking.org/test/pts/redis-1.2.0" xlink:show="new">
+      <text x="97" y="133">redis: GET</text>
+    </a>
+    <a xlink:href="https://openbenchmarking.org/test/pts/redis-1.2.0" xlink:show="new">
+      <text x="97" y="149">redis: SET</text>
+    </a>
+  </g>
+  <g font-size="10" fill="#065695" font-weight="bold" text-anchor="middle" dominant-baseline="text-before-edge">
+    <text x="162" y="49">2020-02-14 00:59</text>
+  </g>
+  <g fill="#BABABA"/>
+  <g text-anchor="middle" font-size="10" fill="#065695">
+    <text x="162" y="86" xlink:title="STD Dev: 8.43%;  STD Error: 34600.04">1590033.87</text>
+    <text x="162" y="102" xlink:title="STD Dev: 1.75%;  STD Error: 11633.03">1153196.38</text>
+    <text x="162" y="118" xlink:title="STD Dev: 2.82%;  STD Error: 11710.02">1016245.83</text>
+    <text x="162" y="134" xlink:title="STD Dev: 4.12%;  STD Error: 16224.17">1523638.32</text>
+    <text x="162" y="150" xlink:title="STD Dev: 0.35%;  STD Error: 2408.64">1179255.08</text>
+  </g>
+  <line x1="113" y1="73" x2="113" y2="153" stroke="#949494" stroke-width="225" stroke-dasharray="1,15"/>
+  <rect x="0" y="153" width="225" height="16" fill="#231f20"/>
+  <a xlink:href="https://www.phoronix-test-suite.com/" xlink:show="new">
+    <text x="223" y="166" font-size="10" fill="#FFFFFF" text-anchor="end" xlink:show="new">PHORONIX-TEST-SUITE.COM</text>
+  </a>
+</svg>

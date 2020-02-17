@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<!--Phoronix Test Suite v9.4.0m2-->
+<?xml-stylesheet type="text/xsl" href="file:///var/lib/phoronix-test-suite/xsl/pts-test-installation-viewer.xsl"?>
+<PhoronixTestSuite>
+  <TestInstallation>
+    <Environment>
+      <Identifier>pts/redis-1.2.0</Identifier>
+      <Version>1.2.0</Version>
+      <CheckSum>4dd83fb654c8ab21204963ed111970f2</CheckSum>
+      <CompilerData>{"compiler-type":"CXX","compiler":"g++","compiler-options":"-MM -MT -g3 -fvisibility=hidden -O3"}</CompilerData>
+      <InstallFootnote></InstallFootnote>
+      <SystemIdentifier>SW50ZWwgQ29yZSBpNy04NzAwS19fRmVkb3JhIDMxX19HQ0MgOS4yLjEgMjAxOTA4MjdfX0NGTEFHUz0tZnJlY29yZC1nY2Mtc3dpdGNoZXMgQC9zdG9yZS9QQVJBTVM7</SystemIdentifier>
+    </Environment>
+    <History>
+      <InstallTime>2020-02-14 00:58:30</InstallTime>
+      <InstallTimeLength>52.516821861267</InstallTimeLength>
+      <LastRunTime>2020-02-14 01:09:56</LastRunTime>
+      <TimesRun>1</TimesRun>
+      <AverageRunTime>46</AverageRunTime>
+      <LatestRunTime>45.019876003265</LatestRunTime>
+    </History>
+  </TestInstallation>
+</PhoronixTestSuite>

@@ -1,0 +1,10 @@
+#!/bin/sh
+cd ~/redis-5.0.5/
+
+./src/redis-server &
+REDIS_SERVER_PID=$!
+sleep 10
+
+./src/redis-benchmark $@ > $LOG_FILE
+kill $REDIS_SERVER_PID
+sed "s/\"/ /g" -i $LOG_FILE

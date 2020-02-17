@@ -1,0 +1,2 @@
+--param asan-globals=0
+--param early-inlining-insns=0

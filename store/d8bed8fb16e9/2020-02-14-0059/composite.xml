@@ -1,0 +1,110 @@
+<?xml version="1.0"?>
+<!--Phoronix Test Suite v9.4.0m2-->
+<PhoronixTestSuite>
+  <Generated>
+    <Title>2020-02-14-0059</Title>
+    <LastModified>2020-02-14 01:09:56</LastModified>
+    <TestClient>Phoronix Test Suite v9.4.0m2 (Vestby)</TestClient>
+    <Description>Docker testing on Fedora 31 via the Phoronix Test Suite.</Description>
+  </Generated>
+  <System>
+    <Identifier>2020-02-14 00:59</Identifier>
+    <Hardware>Processor: Intel Core i7-8700K @ 4.00GHz (6 Cores / 12 Threads), Motherboard: ASUS ROG STRIX Z370-E GAMING (0430 BIOS), Memory: 48GB, Disk: 1024GB Samsung SSD 970 PRO 1TB + 2000GB Seagate ST2000DX001-1CM1 + 500GB Samsung SSD 860, Graphics: i915drmfb, Monitor: U32J59x</Hardware>
+    <Software>OS: Fedora 31, Kernel: 5.4.14-100.fc30.x86_64 (x86_64), Compiler: GCC 9.2.1 20190827, File-System: overlayfs, Screen Resolution: 3840x2160, System Layer: Docker</Software>
+    <User></User>
+    <TimeStamp>2020-02-14 00:59:09</TimeStamp>
+    <TestClientVersion>9.4.0m2</TestClientVersion>
+    <Notes></Notes>
+    <JSON>{"compiler-configuration":"--build=x86_64-redhat-linux --disable-libunwind-exceptions --enable-__cxa_atexit --enable-bootstrap --enable-cet --enable-checking=release --enable-gnu-indirect-function --enable-gnu-unique-object --enable-initfini-array --enable-languages=c,c++,fortran,objc,obj-c++,ada,go,d,lto --enable-multilib --enable-offload-targets=nvptx-none --enable-plugin --enable-shared --enable-threads=posix --mandir=\/usr\/share\/man --with-arch_32=i686 --with-gcc-major-version-only --with-isl --with-linker-hash-style=gnu --with-tune=generic --without-cuda-driver","cpu-scaling-governor":"intel_pstate powersave","cpu-microcode":"0xca","environment-variables":"CFLAGS=\"-frecord-gcc-switches @\/store\/PARAMS\"","security":"itlb_multihit: KVM: Mitigation of Split huge pages + l1tf: Mitigation of PTE Inversion; VMX: conditional cache flushes SMT vulnerable + mds: Mitigation of Clear buffers; SMT vulnerable + meltdown: Mitigation of PTI + spec_store_bypass: Mitigation of SSB disabled via prctl and seccomp + spectre_v1: Mitigation of usercopy\/swapgs barriers and __user pointer sanitization + spectre_v2: Mitigation of Full generic retpoline IBPB: conditional IBRS_FW STIBP: conditional RSB filling + tsx_async_abort: Mitigation of Clear buffers; SMT vulnerable"}</JSON>
+  </System>
+  <Result>
+    <Identifier>pts/redis-1.2.0</Identifier>
+    <Title>Redis</Title>
+    <AppVersion>5.0.5</AppVersion>
+    <Arguments>-t lpop</Arguments>
+    <Description>Test: LPOP</Description>
+    <Scale>Requests Per Second</Scale>
+    <Proportion>HIB</Proportion>
+    <DisplayFormat>BAR_GRAPH</DisplayFormat>
+    <Data>
+      <Entry>
+        <Identifier>2020-02-14 00:59</Identifier>
+        <Value>1590033.87</Value>
+        <RawString>1733102.12:1736111.12:1468428.75:1647446.5:1680672.25:1464128.75:1579778.75:1733102.12:1536098.25:1310616:1694915.38:1724138:1626016.25:1477104.88:1438848.88</RawString>
+        <JSON>{"compiler-options":{"compiler-type":"CXX","compiler":"g++","compiler-options":"-MM -MT -g3 -fvisibility=hidden -O3"},"test-run-times":"10.74:10.65:10.75:10.65:10.65:10.75:10.75:10.65:10.75:10.86:10.64:10.65:10.64:10.74:10.74"}</JSON>
+      </Entry>
+    </Data>
+  </Result>
+  <Result>
+    <Identifier>pts/redis-1.2.0</Identifier>
+    <Title>Redis</Title>
+    <AppVersion>5.0.5</AppVersion>
+    <Arguments>-t sadd</Arguments>
+    <Description>Test: SADD</Description>
+    <Scale>Requests Per Second</Scale>
+    <Proportion>HIB</Proportion>
+    <DisplayFormat>BAR_GRAPH</DisplayFormat>
+    <Data>
+      <Entry>
+        <Identifier>2020-02-14 00:59</Identifier>
+        <Value>1153196.38</Value>
+        <RawString>1129943.5:1164144.38:1165501.25</RawString>
+        <JSON>{"compiler-options":{"compiler-type":"CXX","compiler":"g++","compiler-options":"-MM -MT -g3 -fvisibility=hidden -O3"},"test-run-times":"10.95:10.95:10.96"}</JSON>
+      </Entry>
+    </Data>
+  </Result>
+  <Result>
+    <Identifier>pts/redis-1.2.0</Identifier>
+    <Title>Redis</Title>
+    <AppVersion>5.0.5</AppVersion>
+    <Arguments>-t lpush</Arguments>
+    <Description>Test: LPUSH</Description>
+    <Scale>Requests Per Second</Scale>
+    <Proportion>HIB</Proportion>
+    <DisplayFormat>BAR_GRAPH</DisplayFormat>
+    <Data>
+      <Entry>
+        <Identifier>2020-02-14 00:59</Identifier>
+        <Value>1016245.83</Value>
+        <RawString>1055966.12:981354.19:1033057.88:1007049.38:989119.62:1030927.81</RawString>
+        <JSON>{"compiler-options":{"compiler-type":"CXX","compiler":"g++","compiler-options":"-MM -MT -g3 -fvisibility=hidden -O3"},"test-run-times":"11.07:11.07:11.11:11.13:11.10:11.12"}</JSON>
+      </Entry>
+    </Data>
+  </Result>
+  <Result>
+    <Identifier>pts/redis-1.2.0</Identifier>
+    <Title>Redis</Title>
+    <AppVersion>5.0.5</AppVersion>
+    <Arguments>-t get</Arguments>
+    <Description>Test: GET</Description>
+    <Scale>Requests Per Second</Scale>
+    <Proportion>HIB</Proportion>
+    <DisplayFormat>BAR_GRAPH</DisplayFormat>
+    <Data>
+      <Entry>
+        <Identifier>2020-02-14 00:59</Identifier>
+        <Value>1523638.32</Value>
+        <RawString>1497006:1383125.88:1510574:1612903.25:1584786.12:1557632.38:1550387.62:1600000:1428571.5:1503759.38:1464128.75:1560062.5:1536098.25:1515151.5:1550387.62</RawString>
+        <JSON>{"compiler-options":{"compiler-type":"CXX","compiler":"g++","compiler-options":"-MM -MT -g3 -fvisibility=hidden -O3"},"test-run-times":"10.86:10.81:10.81:10.71:10.73:10.72:10.73:10.71:10.83:10.83:10.83:10.73:10.74:10.74:10.73"}</JSON>
+      </Entry>
+    </Data>
+  </Result>
+  <Result>
+    <Identifier>pts/redis-1.2.0</Identifier>
+    <Title>Redis</Title>
+    <AppVersion>5.0.5</AppVersion>
+    <Arguments>-t set</Arguments>
+    <Description>Test: SET</Description>
+    <Scale>Requests Per Second</Scale>
+    <Proportion>HIB</Proportion>
+    <DisplayFormat>BAR_GRAPH</DisplayFormat>
+    <Data>
+      <Entry>
+        <Identifier>2020-02-14 00:59</Identifier>
+        <Value>1179255.08</Value>
+        <RawString>1183431.88:1179245.25:1175088.12</RawString>
+        <JSON>{"compiler-options":{"compiler-type":"CXX","compiler":"g++","compiler-options":"-MM -MT -g3 -fvisibility=hidden -O3"},"test-run-times":"11.04:11.03:10.94"}</JSON>
+      </Entry>
+    </Data>
+  </Result>
+</PhoronixTestSuite>

@@ -1,0 +1,1 @@
+BOOT_IMAGE=(hd0,gpt4)/vmlinuz-5.4.14-100.fc30.x86_64 root=/dev/mapper/fedora_localhost--live-root ro resume=/dev/mapper/fedora_localhost--live-swap rd.lvm.lv=fedora_localhost-live/root rd.luks.uuid=luks-9f804124-ae51-46a6-abd8-c0d601b2b34b rd.lvm.lv=fedora_localhost-live/swap rhgb quiet rd.driver.blacklist=nouveau
