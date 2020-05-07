@@ -3,6 +3,9 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.optim as optim
+import matplotlib.pylab as plt
+
+plt.ion()
 
 env = gym.make('CartPole-v0')
 
@@ -59,7 +62,7 @@ policy = PolicyNet(N_inputs,
                    activation,
                    output_activation=output_activation)
 
-#(s_t, t) -> estimate of value function
+#(s_t, t) -> estimate of value function (not being used yet)
 critic = PolicyNet(N_inputs+1, 
                    1, 
                    N_hidden_layers, 
@@ -68,16 +71,12 @@ critic = PolicyNet(N_inputs+1,
                    None)
 
 
-def create_trajectories(env, policy, N, causal=False, baseline=None):
-    J_list = []
-    R_list = []
-
+def create_trajectories(env, policy, N, causal=False, baseline=False):
     action_probs_all_list = []
     rewards_all_list = []
 
-    for _ in range(N):
+    for _ in range(N): #run env N times
         state = env.reset()
-        prob_list = torch.tensor([])
         
         action_prob_list, reward_list = torch.tensor([]), torch.tensor([])
         done = False 
@@ -104,15 +103,26 @@ def create_trajectories(env, policy, N, causal=False, baseline=None):
     #mean reward
     R = np.mean([torch.sum(r).item() for r in rewards_all_list])
     
-    baseline_term = 0
-    if baseline:
-        baseline_term = R
-
     J = 0
     if causal:
+        #compute baseline terms dependent on time (pretty horrible implementation)
+        T = np.max([len(row) for row in rewards_to_go_list])
+        baseline_term = torch.zeros(T)
+        if baseline:
+            baseline_term = torch.zeros(N, T)
+            for idx in range(N):
+                row = rewards_to_go_list[idx]
+                baseline_term[idx] = torch.cat((row, torch.zeros(T-len(row))))
+            baseline_term = torch.mean(baseline_term, dim=0)
+
         for idx in range(N):
-            J += (action_probs_all_list[idx].log() * (rewards_to_go_list[idx] - baseline_term)).sum()
+            row = rewards_to_go_list[idx]
+            J += (action_probs_all_list[idx].log() * (row - baseline_term[:len(row)])).sum()
     else:
+        baseline_term = 0
+        if baseline:
+            baseline_term = R
+
         for idx in range(N): #loop over trajs
             J += action_probs_all_list[idx].log().sum() * (rewards_all_list[idx].sum() - baseline_term)
     
@@ -128,7 +138,7 @@ def training_loop(N_iter,
                   policy=None, 
                   lr=1e-2, 
                   causal=False,
-                  baseline=None,
+                  baseline=False,
                   debug=False):
     
     if policy is None:
@@ -155,7 +165,7 @@ def training_loop(N_iter,
 
     return reward_curve
 
-def get_learning_curves(N_exp, N_iter, batch_size, env, causal=False, baseline=None):
+def get_learning_curves(N_exp, N_iter, batch_size, env, causal=False, baseline=False):
     reward_curve_list = []
     for _ in range(N_exp):
         policy = PolicyNet(N_inputs, N_outputs, N_hidden_layers, N_hidden_nodes, activation, output_activation)
