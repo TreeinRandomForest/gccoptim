@@ -142,7 +142,7 @@ def training_loop(N_iter,
 
     for i in range(N_iter):
         #step 1: generate batch_size trajectories
-        J, mean_reward = create_trajectories(env, policy, batch_size, causal=causal)
+        J, mean_reward = create_trajectories(env, policy, batch_size, causal=causal, baseline=baseline)
 
         #step 2: define J
         optimizer.zero_grad()
