@@ -1,50 +1,96 @@
 import numpy as np
-import model, config
+import model, config, paramset
+import docker
 import time
+import shutil
 import os
 
-def read_options(filename):
-	gcc_version, params = paramset.get_gcc_options()
 
-	print(f'Using gcc {gcc_version}')
+def read_options():
+    '''
+    '''
+    gcc_version, params = paramset.get_gcc_params()
 
-	return params
+    print(f'Using gcc {gcc_version}')
 
-def check_test_suite_finished():
-	return os.path.exists(config.Storage.test_lock_file)
+    return params
 
-def generate_param_set():
-	return [{'asan-globals': 0},
-	 		{'early-inlining-insns': 0}]
+def check_test_suite_finished(container):
+    container.wait()
 
-def write_params_to_file(params):
-	for idx, paramset in enumerate(params):
-		with open(f'{config.Storage.paramset_prefix}{idx}', 'w') as f:
-			for elem in paramset:
-				print(f'--param {elem}={paramset[elem]}', file=f)
+def generate_param_set(params, counter):
+    '''This is where the model goes
+    '''
+    
+    #return [{'asan-globals': 0},
+    #       {'early-inlining-insns': 0}]
 
-def generate_model_lock_file(counter):
-	with open(config.Storage.model_lock_file, 'w') as f:
-		print(counter, time.time(), file=f)
+    keys = list(params.keys())
+    #key = key[10]
+    key = 'unroll-jam-min-percent'
 
-def remove_test_lock_file():
-	os.remove(config.Storage.test_lock_file)
+    minimum, maximum = params[key]['minimum'], params[key]['maximum']
 
-def run():
-	counter = 0
-	while True:
-		counter += 1
-		while not check_test_suite_finished():
-			time.sleep(1)
-			print('Waiting')
+    if minimum==maximum:
+        raise ValueError(f"Minimum = Maximum for key = {key}")
 
-		params_to_try = generate_param_set()
+    #return_val = [{key: value} for value in range(minimum, maximum, 1)]
+    return_val = {key: 10}
 
-		write_params_to_file(params_to_try)
+    return return_val
 
-		generate_model_lock_file(counter)
+def write_params_to_file(params, param_filename):
+    with open(param_filename, 'w') as f:
+        for elem in params:
+            print(f'--param {elem}={params[elem]}', file=f)
 
-		remove_test_lock_file()
+def stopping_criterion():
+    return True
+
+def run_test_suite(container_name, client):
+    local_store = os.path.join(config.Storage.volume_loc, container_name)
+    container_store = config.Storage.test_container_loc
+
+    container = client.containers.run(config.Containers.test_image,
+                                      'bash /home/user/store/run_experiments.sh',
+                                      #'./run_experiments.sh',
+                                      detach=True,
+                                      name=container_name,
+                                      volumes={local_store : {'bind': container_store, 'mode': 'rw'}}) 
+
+    return container
+
+def run(params):
+    counter = 0
+
+    client = docker.from_env()
+    prune_freq = 100
+
+    while stopping_criterion():
+        counter += 1
+
+        #generate params
+        params_to_try = generate_param_set(params, counter)
+
+        #create dir for shared volume
+        container_name = ''.join([chr(i) for i in np.random.choice(np.concatenate([np.arange(65, 91), np.arange(97, 123)]), size=8)])
+        storage_loc = os.path.join(config.Storage.volume_loc, container_name)
+        os.makedirs(storage_loc)
+
+        param_filename = os.path.join(storage_loc, 'PARAMS')
+        write_params_to_file(params_to_try, param_filename)
+
+        #copy script to shared volume
+        shutil.copy(config.Storage.user_config, storage_loc)
+        shutil.copy(config.Storage.test_script, storage_loc)
+        container = run_test_suite(container_name, client)
+
+        check_test_suite_finished(container)
+
+        if counter % prune_freq == 0:
+            client.containers.prune()
 
 if __name__=="__main__":
-	run()
+    params = read_options()
+
+    #run(params)

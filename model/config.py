@@ -13,8 +13,11 @@ class Scan:
 	pass
 
 class Storage:
-	out_loc = '/home/user/store'
-	paramset_prefix = os.path.join(out_loc, 'PARAMS')
+	volume_loc = '/home/sanjay/GCCOptimization/gccoptim/store/dynamic'
+	test_container_loc = '/home/user/store'
 
-	model_lock_file = os.path.join(out_loc, 'PARAMSWRITTEN.log')
-	test_lock_file = os.path.join(out_loc, 'TESTDONE.log')
+	test_script = '/home/sanjay/GCCOptimization/gccoptim/container-testsuite/run_experiments.sh'
+	user_config = '/home/sanjay/GCCOptimization/gccoptim/store/user-config.xml'
+
+class Containers:
+	test_image = 'gcc_testsuite'
