@@ -1,11 +1,12 @@
 import numpy as np
 import xml.etree.ElementTree as ET
+import os
 
 def read_results(loc):
 	filename = os.path.join(loc, 'composite.xml')
 
-	if os.path.exists(filename):
-		raise ValueException(f'File composite.xml not found in: {loc}')
+	if not os.path.exists(filename):
+		raise ValueError(f'File composite.xml not found in: {loc}')
 
 	r = parse_xml(filename)
 
