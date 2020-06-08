@@ -44,7 +44,10 @@ def write_params_to_file(params, param_filename):
         for elem in params:
             print(f'--param {elem}={params[elem]}', file=f)
 
-def stopping_criterion():
+def stopping_criterion(counter):
+    if counter==3:
+        return False
+
     return True
 
 def run_test_suite(container_name, client):
@@ -66,7 +69,7 @@ def run(params):
     client = docker.from_env()
     prune_freq = 100
 
-    while stopping_criterion():
+    while stopping_criterion(counter):
         counter += 1
 
         #generate params
@@ -84,8 +87,12 @@ def run(params):
         shutil.copy(config.Storage.user_config, storage_loc)
         shutil.copy(config.Storage.test_script, storage_loc)
         container = run_test_suite(container_name, client)
+        print(container)
 
         check_test_suite_finished(container)
+
+        with open(os.path.join(storage_loc, 'logs'), 'w') as f:
+            print(container.logs().decode(), file=f)
 
         if counter % prune_freq == 0:
             client.containers.prune()
