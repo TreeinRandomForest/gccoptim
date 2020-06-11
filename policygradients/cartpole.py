@@ -5,6 +5,18 @@ import torch.nn as nn
 import torch.optim as optim
 import matplotlib.pylab as plt
 
+'''
+Critic changes:
+
+define critic
+
+model update in training_loop
+
+use critic during gradient computation in create_trajectories
+
+compute critic loss based on new trajectory
+'''
+
 plt.ion()
 
 env = gym.make('CartPole-v0')
@@ -63,7 +75,7 @@ policy = PolicyNet(N_inputs,
                    output_activation=output_activation)
 
 #(s_t, t) -> estimate of value function (not being used yet)
-critic = PolicyNet(N_inputs+1, 
+critic = PolicyNet(N_inputs+1, #inputs and time-step
                    1, 
                    N_hidden_layers, 
                    N_hidden_nodes,
@@ -71,17 +83,20 @@ critic = PolicyNet(N_inputs+1,
                    None)
 
 
-def create_trajectories(env, policy, N, causal=False, baseline=False):
+def create_trajectories(env, policy, N, causal=False, baseline=False, critic=False, critic_update='MC'):
     action_probs_all_list = []
     rewards_all_list = []
+    states_all_list = []
 
     for _ in range(N): #run env N times
         state = env.reset()
         
-        action_prob_list, reward_list = torch.tensor([]), torch.tensor([])
+        action_prob_list, reward_list, state_list = torch.tensor([]), torch.tensor([]), torch.tensor([])
         done = False 
 
         while not done:
+            state_list = torch.cat((state_list, torch.tensor([state]).float())) #
+
             action_probs = policy(torch.from_numpy(state).unsqueeze(0).float()).squeeze(0)
 
             action_selected_index = torch.multinomial(action_probs, 1)
@@ -95,15 +110,94 @@ def create_trajectories(env, policy, N, causal=False, baseline=False):
 
         action_probs_all_list.append(action_prob_list)
         rewards_all_list.append(reward_list)
+        states_all_list.append(state_list)
 
     #non-optimized code (negative strides not supported by torch yet)
     rewards_to_go_list = [torch.tensor(np.cumsum(traj_rewards.numpy()[::-1])[::-1].copy())
                           for traj_rewards in rewards_all_list]
 
-    #mean reward
-    R = np.mean([torch.sum(r).item() for r in rewards_all_list])
-    
+
+    #compute objective
     J = 0
+    critic_inputs, critic_targets = [], []
+    #for clarity, refactoring code below into specific modes. some of these can be combined
+    if not baseline and not causal:
+        print("No Baseline - Not Causal")
+        for idx in range(N):
+            J += action_probs_all_list[idx].log().sum() * (rewards_all_list[idx].sum())
+
+    if not baseline and causal:
+        print("No Baseline - Causal")
+        for idx in range(N):
+            row = rewards_to_go_list[idx]
+            J += (action_probs_all_list[idx].log() * row).sum()
+
+    #critic only shows up in baseline cases
+    if baseline and not causal and not critic: #critic only affects baseline cases
+        print("Baseline - Not Causal, No Critic")
+        baseline_term = np.mean([torch.sum(r).item() for r in rewards_all_list])
+
+        for idx in range(N):
+            J += action_probs_all_list[idx].log().sum() * (rewards_all_list[idx].sum() - baseline_term)
+
+    if baseline and not causal and critic:
+        raise NotImplementedError("Probably not useful")
+        for idx in range(N):
+            row = rewards_to_go_list[idx]
+            actions = action_probs_all_list[idx]
+            states = states_all_list[idx]
+
+            T = len(row)
+            for t in range(T):
+                J += actions[t].log() * (row[t] - critic(torch.cat([torch.tensor([t]).float(), states[t]])))
+
+    if baseline and causal and not critic:
+        '''Need time-dependent baseline terms
+        '''
+        print("Baseline - Causal, No Critic")
+        #compute time-dependent baseline terms (mean reward to go)
+        T = np.max([len(row) for row in rewards_to_go_list])
+        baseline_term = torch.zeros(N, T)
+        for idx in range(N):
+            row = rewards_to_go_list[idx]
+            baseline_term[idx] = torch.cat((row, torch.zeros(T-len(row)))) #pad with 0s if episode took time < T (end)
+        baseline_term = torch.mean(baseline_term, dim=0) #time-dependent means
+
+        #compute J
+        for idx in range(N):
+            row = rewards_to_go_list[idx]
+            J += (action_probs_all_list[idx].log() * (row - baseline_term[:len(row)])).sum() #subtract time-dependent means
+
+    if baseline and causal and critic:
+        #train/update critic
+        #(state, t) -> (rewards to go)
+
+        #print("Baseline - Causal, Critic")
+        #return states_all_list, action_probs_all_list, rewards_to_go_list
+        for idx in range(N):
+            row = rewards_to_go_list[idx]
+            rewards = rewards_all_list[idx] #needed to update critic
+            actions = action_probs_all_list[idx]
+            states = states_all_list[idx]
+
+            T = len(row)
+            for t in range(T):
+                critic_in = torch.cat([torch.tensor([t]).float(), states[t]])
+                
+                J += actions[t].log() * (row[t] - critic(critic_in))
+
+                if critic_update=='MC':
+                    critic_inputs.append(critic_in)
+                    critic_targets.append(row[t]) #pure MC - target = reward to go
+                
+                if critic_update=='TD':
+                    if t < T-1:
+                        critic_inputs.append(critic_in)
+                        critic_targets.append(rewards[t].unsqueeze(0) + critic(torch.cat([torch.tensor([t+1]).float(), states[t+1]]))) #TD - target = current reward + critic estimate
+    J = J / N
+
+
+    '''
     if causal:
         #compute baseline terms dependent on time (pretty horrible implementation)
         T = np.max([len(row) for row in rewards_to_go_list])
@@ -112,33 +206,56 @@ def create_trajectories(env, policy, N, causal=False, baseline=False):
             baseline_term = torch.zeros(N, T)
             for idx in range(N):
                 row = rewards_to_go_list[idx]
-                baseline_term[idx] = torch.cat((row, torch.zeros(T-len(row))))
-            baseline_term = torch.mean(baseline_term, dim=0)
+                baseline_term[idx] = torch.cat((row, torch.zeros(T-len(row)))) #pad with 0s if episode took time < T (end)
+            baseline_term = torch.mean(baseline_term, dim=0) #time-dependent means
 
         for idx in range(N):
             row = rewards_to_go_list[idx]
-            J += (action_probs_all_list[idx].log() * (row - baseline_term[:len(row)])).sum()
+            J += (action_probs_all_list[idx].log() * (row - baseline_term[:len(row)])).sum() #subtract time-dependent means
     else:
         baseline_term = 0
         if baseline:
             baseline_term = R
 
         for idx in range(N): #loop over trajs
-            J += action_probs_all_list[idx].log().sum() * (rewards_all_list[idx].sum() - baseline_term)
+            if not critic:
+                J += action_probs_all_list[idx].log().sum() * (rewards_all_list[idx].sum() - baseline_term)
+            else:
+                row = rewards_to_go_list[idx]
+                actions = action_probs_all_list[idx]
+                states = states_all_list[idx]
+
+                T = len(row)
+
+                for t in range(T):
+                    J += actions[t].log() * (row[t] - critic(torch.tensor([t, states[t]])))
+    '''
+    R = np.mean([torch.sum(r).item() for r in rewards_all_list]) #track overall progress
+
+    #critic loss computation
+    J_critic = None
+    critic_loss = nn.MSELoss()
     
-    J = J / N
+    if critic:
+        critic_inputs = torch.stack(critic_inputs)
+        critic_targets = torch.stack(critic_targets)
 
-    R = np.mean([torch.sum(r).item() for r in rewards_all_list])
+        preds = critic(critic_inputs)
 
-    return J, R
+        J_critic = critic_loss(preds, critic_targets)
+
+    return J, R, J_critic
 
 def training_loop(N_iter, 
                   batch_size, 
                   env,
                   policy=None, 
-                  lr=1e-2, 
+                  lr=1e-2,
+                  critic_lr=1e-1, 
                   causal=False,
                   baseline=False,
+                  critic=None,
+                  critic_update='MC',
                   debug=False):
     
     if policy is None:
@@ -146,18 +263,28 @@ def training_loop(N_iter,
     
     reward_curve = {}
 
-    optimizer = optim.Adam(policy.parameters(), lr=lr)
+    optimizer_policy = optim.Adam(policy.parameters(), lr=lr)
+    if critic:
+        optimizer_critic = optim.Adam(critic.parameters(), lr=critic_lr)
 
     exp_reward_list = []
 
     for i in range(N_iter):
         #step 1: generate batch_size trajectories
-        J, mean_reward = create_trajectories(env, policy, batch_size, causal=causal, baseline=baseline)
+        J_policy, mean_reward, J_critic = create_trajectories(env, policy, batch_size, causal=causal, baseline=baseline, critic=critic, critic_update=critic_update)
+        #print(f'Critic Loss = {J_critic}')
+        
+        #step 2: define J and update policy
+        optimizer_policy.zero_grad()
+        (-J_policy).backward()
+        optimizer_policy.step()
 
-        #step 2: define J
-        optimizer.zero_grad()
-        (-J).backward()
-        optimizer.step()
+        #step 3: 
+        if critic:
+            if J_critic.item() > 0.1:
+                optimizer_critic.zero_grad()
+                J_critic.backward()
+                optimizer_critic.step()        
 
         if i % 10 == 0:
             print(f"Iteration {i} : Mean Reward = {mean_reward}")
