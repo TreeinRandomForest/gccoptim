@@ -1,4 +1,87 @@
-import numpy as np
+import glob
+import config
+import results
+from utils import (read_options, check_test_suite_finished,
+                  read_params_from_file, write_params_to_file,
+                  run_test_suite)
 
-def gen_scan():
-	pass
+class FullScan:
+	def full_scan(
+	    metric_name, 
+	    metric_min, 
+	    metric_max, 
+	    metric_step_size, 
+	    client, 
+	    container_tag, 
+	    N_parallel=3
+	    ):
+	    
+	    container_list = []
+	    for m in np.arange(metric_min, metric_max+1, metric_step_size):
+	        params = {metric_name: m}
+
+	        container_name = ''.join([chr(i) for i in np.random.choice(np.concatenate([np.arange(65, 91), np.arange(97, 123)]), size=8)])
+	        container_name = f'{container_tag}_{container_name}'
+
+	        print(f'Container Name: {container_name}')
+	        print(f'Params = {params}\n')
+
+	        container = run_test_suite(container_name, params, client)
+
+	        container_list.append(container)
+
+	        if N_parallel > 0 and len(container_list) == N_parallel:
+	            check_test_suite_finished(container_list)
+	            container_list = []
+
+	    check_test_suite_finished(container_list)
+
+	    return container_list
+
+	def read_full_scan_results(container_tag):
+	    r = []
+	    for d in glob.glob(f'{config.Storage.volume_loc}/{container_tag}*'):
+	        res_loc = glob.glob(f'{d}/test-results/*')
+	        if len(res_loc) > 1:
+	            raise ValueError(f"Found Multiple Results: {res_loc}")
+	        res_loc = res_loc[0]
+
+	        param_file = f'{d}/PARAMS'
+	        
+	        current_params = read_params_from_file(param_file)
+	        current_res = results.read_results(res_loc)
+
+	        r.append((current_params, current_res))
+
+	    return r
+
+class Annealing:
+	def annealing(N_iter, T_decay=0.99, T_decay_iter=100):
+	    T = estimate_init_temperature()
+
+	    for i in range(N_iter):
+	        if i%T_decay_iter==0:
+	            T *= T_decay
+
+	        if i==0:
+	            params_current = generate_init_params()
+	            
+	            container_name = ''.join([chr(i) for i in np.random.choice(np.concatenate([np.arange(65, 91), np.arange(97, 123)]), size=8)])
+	            
+	            container = run_test_suite(container_name, params_current, client)
+
+	        param_candidate = get_neighbor(param_current)
+
+	        container_name = ''.join([chr(i) for i in np.random.choice(np.concatenate([np.arange(65, 91), np.arange(97, 123)]), size=8)])
+
+	        container = run_test_suite(container_name, client)
+
+
+
+	        check_test_suite_finished([container])
+
+	        with open(os.path.join(storage_loc, 'logs'), 'w') as f:
+	            print(container.logs().decode(), file=f)
+
+	        if counter % prune_freq == 0:
+	            client.containers.prune()
