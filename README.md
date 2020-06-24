@@ -1,7 +1,7 @@
 # gccoptim
 Using reinforcement learning to do combinatorial optimization on gcc parameters
 
-# Infrastructure Details
+## Infrastructure Details
 
 The simplest policy gradient implementation consists of multiple loops for the following steps:
 
@@ -23,7 +23,16 @@ In the simplest setup, we repeat two steps indefinitely:
 
 * container-testsuite: the parameter configuration(s) are used to compile the tests with the appropriate gcc parameters and run the benchmark.
 
-To coordinate the two containers, we use a simple file-based locking system.
+### Parallelization:
 
-EXPLAIN LOCKING
+* This branch (docker-sdk) alternates between updating the model and running tests with potentially k multiple parameter settings. All the k experiments need to finish before an update to the model.
 
+### Future infrastructure extensions:
+
+* Asynchronous updates from experiments.
+
+* Use Beaker
+
+## Notes:
+
+### 
