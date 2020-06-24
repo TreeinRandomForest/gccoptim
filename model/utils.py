@@ -2,6 +2,7 @@ import paramset
 import config
 import os
 import docker
+import shutil
 
 def get_client():
     client = docker.from_env()
@@ -59,3 +60,7 @@ def run_test_suite(container_name, params, client):
                                       volumes={local_store : {'bind': container_store, 'mode': 'rw'}}) 
 
     return container
+
+def write_logs(container, outfile):
+    with open(outfile, 'w') as f:
+        printf(container.logs(), file=f)
