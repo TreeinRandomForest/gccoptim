@@ -2,17 +2,20 @@ import glob
 import numpy as np
 import config
 import results
-from utils import (read_options, check_test_suite_finished,
+from utils import (check_test_suite_finished, generate_container_name,
                   read_params_from_file, write_params_to_file,
-                  run_test_suite)
+                  run_test_suite, get_client)
 
 class FullScan:
+    def __init__(self):
+        self.client = get_client()
+
     def full_scan(
+        self,
         metric_name, 
         metric_min, 
         metric_max, 
         metric_step_size, 
-        client, 
         container_tag, 
         N_parallel=3
         ):
@@ -21,13 +24,13 @@ class FullScan:
         for m in np.arange(metric_min, metric_max+1, metric_step_size):
             params = {metric_name: m}
 
-            container_name = ''.join([chr(i) for i in np.random.choice(np.concatenate([np.arange(65, 91), np.arange(97, 123)]), size=8)])
-            container_name = f'{container_tag}_{container_name}'
+            container_name = generate_container_name()
+            container_name = f'{container_tag}_{metric_name}_{m}_{container_name}'
 
             print(f'Container Name: {container_name}')
             print(f'Params = {params}\n')
 
-            container = run_test_suite(container_name, params, client)
+            container = run_test_suite(container_name, params, self.client)
 
             container_list.append(container)
 
@@ -39,7 +42,7 @@ class FullScan:
 
         return container_list
 
-    def read_full_scan_results(container_tag):
+    def read_full_scan_results(self, container_tag):
         r = []
         for d in glob.glob(f'{config.Storage.volume_loc}/{container_tag}*'):
             res_loc = glob.glob(f'{d}/test-results/*')
@@ -64,7 +67,7 @@ class Annealing:
     def estimate_init_temperature(self, N_tries):
         for _ in range(N_tries):
             params = generate_init_params()
-            container_name = ''.join([chr(i) for i in np.random.choice(np.concatenate([np.arange(65, 91), np.arange(97, 123)]), size=8)])
+            container_name = generate_container_name()
             container = run_test_suite(container_name, params_current, client)
             check_test_suite_finished([container])
             res_current = self.read_result(container_name)
@@ -92,7 +95,7 @@ class Annealing:
         T = estimate_init_temperature()
 
         params_current = generate_init_params()
-        container_name = ''.join([chr(i) for i in np.random.choice(np.concatenate([np.arange(65, 91), np.arange(97, 123)]), size=8)])
+        container_name = generate_container_name()
         container = run_test_suite(container_name, params_current, client)
         check_test_suite_finished([container])
         res_current = self.read_result(container_name)
@@ -102,7 +105,7 @@ class Annealing:
                 T *= T_decay
 
             params_candidate = get_neighbor(params_current)
-            container_name = ''.join([chr(i) for i in np.random.choice(np.concatenate([np.arange(65, 91), np.arange(97, 123)]), size=8)])
+            container_name = generate_container_name()
             container = run_test_suite(container_name, params_candidate, client)
             check_test_suite_finished([container])
             res_candidate = self.read_result(container_name)

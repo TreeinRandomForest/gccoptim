@@ -1,22 +1,16 @@
-import paramset
 import config
 import os
 import docker
 import shutil
+import numpy as np
 
 def get_client():
     client = docker.from_env()
 
     return client
 
-def read_options():
-    '''
-    '''
-    gcc_version, params = paramset.get_gcc_params()
-
-    print(f'Using gcc {gcc_version}')
-
-    return params
+def generate_container_name():
+    return ''.join([chr(i) for i in np.random.choice(np.concatenate([np.arange(65, 91), np.arange(97, 123)]), size=8)])
 
 def check_test_suite_finished(container_list):
     [container.wait() for container in container_list]

@@ -5,7 +5,8 @@ import time
 import shutil
 import glob
 import os
-from utils import (read_options, check_test_suite_finished,
+import numpy as np
+from utils import (check_test_suite_finished,
                   read_params_from_file, write_params_to_file,
                   run_test_suite)
 
@@ -28,7 +29,7 @@ def run(params):
         params_to_try = generate_param_set(params, counter)
 
         #create dir for shared volume
-        container_name = ''.join([chr(i) for i in np.random.choice(np.concatenate([np.arange(65, 91), np.arange(97, 123)]), size=8)])
+        container_name = generate_container_name()
 
         container = run_test_suite(container_name, client)
 
@@ -42,7 +43,25 @@ def run(params):
         if counter % prune_freq == 0:
             client.containers.prune()
 
+def run_scan(params, 
+             metric_name, 
+             metric_min, 
+             metric_max, 
+             metric_step_size, 
+             N_parallel=1):
+
+    scanner = model.FullScan()
+
+    clist = scanner.full_scan(metric_name,
+                              metric_min,
+                              metric_max,
+                              metric_step_size,
+                              'full_scan',
+                              N_parallel=N_parallel)
+
+    return scanner, clist
+
 if __name__=="__main__":
-    params = read_options()
+    params = paramset.read_options()
 
     #run(params)
