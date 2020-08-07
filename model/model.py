@@ -107,7 +107,7 @@ class FullScan:
 
         return pd.DataFrame(df)
 
-    def plot_stats(self, df, save_loc):
+    def plot_stats(self, df, save_loc, params=None):
         if not os.path.exists(save_loc):
             os.makedirs(save_loc)
 
@@ -124,6 +124,25 @@ class FullScan:
 
                     d.sort_values('param_val', ascending=True, inplace=True)
 
+                    #default vals
+                    if params is not None:
+                        default_param_val = params[param_name]['default'] #actual default
+
+                        #find closest match
+                        row = d.loc[(d['param_val'] - default_param_val).abs().sort_values().index[0]]
+                        default_param_val_closest = row['param_val']
+
+                        default_metric_mean_closest = row['metric_mean']
+                        max_over_default_val = d['metric_mean'].max() / default_metric_mean_closest
+
+                    #metrics
+                    max_over_min_val = d['metric_mean'].max()/d['metric_mean'].min()
+                    if params is not None:
+                        max_over_min_str = f"{param_name},{test_name},{test_desc},{max_over_min_val},{max_over_default_val}"
+                    else:
+                        max_over_min_str = f"{param_name},{test_name},{test_desc},{max_over_min_val}"
+                    max_over_min.append(max_over_min_str)
+
                     #plotting
                     units = d['metric_units'].unique()
                     if len(units) > 1:
@@ -134,13 +153,14 @@ class FullScan:
                     plt.plot(d['param_val'], d['metric_mean'], 'p-')
                     plt.xlabel(param_name)
                     plt.ylabel(units)
-                    plt.title(f'{test_name} : {test_desc}')
+                    if params is not None:
+                        plt.plot([default_param_val_closest], [default_metric_mean_closest], 'p', c='orange')
+                        plt.title(f'{test_name} : {test_desc} : max/min = {max_over_min_val:.3f}\n default={default_param_val} closest={default_param_val_closest} metric={default_metric_mean_closest} max/default={max_over_default_val:.3f}')
+                    else:
+                        plt.title(f'{test_name} : {test_desc} : max/min = {max_over_min_val:.3f}')
 
                     plt.savefig(f'{save_loc}/{param_name}_{test_name}_{test_desc.replace(": ", "_")}.png')
 
-                    #metrics
-                    max_over_min_str = f"{param_name},{test_name},{test_desc},{d['metric_mean'].max()/d['metric_mean'].min()}"
-                    max_over_min.append(max_over_min_str)
 
         with open(f'{save_loc}/max_over_min', 'w') as f:
             for m in max_over_min:
