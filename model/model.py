@@ -1,10 +1,14 @@
 import glob
 import numpy as np
+import pandas as pd
+import matplotlib.pylab as plt
+import os
 import config
 import results
 from utils import (check_test_suite_finished, generate_container_name,
                   read_params_from_file, write_params_to_file,
                   run_test_suite, get_client)
+plt.ion()
 
 class FullScan:
     def __init__(self):
@@ -19,6 +23,8 @@ class FullScan:
         container_tag, 
         N_parallel=3
         ):
+        
+        assert(N_parallel >= 0)
         
         container_list = []
         for m in np.arange(metric_min, metric_max+1, metric_step_size):
@@ -46,18 +52,99 @@ class FullScan:
         r = []
         for d in glob.glob(f'{config.Storage.volume_loc}/{container_tag}*'):
             res_loc = glob.glob(f'{d}/test-results/*')
+            
             if len(res_loc) > 1:
                 raise ValueError(f"Found Multiple Results: {res_loc}")
+            if len(res_loc) == 0:
+                print(f'Found No Results: {d}')
+                continue
+
             res_loc = res_loc[0]
 
             param_file = f'{d}/PARAMS'
             
-            current_params = read_params_from_file(param_file)
-            current_res = results.read_results(res_loc)
+            try:
+                current_params = read_params_from_file(param_file)
+                current_res = results.read_results(res_loc)
+            except:
+                print(d)
 
             r.append((current_params, current_res))
 
         return r
+
+    def convert_to_df(self, r):
+        '''Only works for one metric being tuned
+        Otherwise, should store param dict in param_name and write a function to flatten
+        '''
+
+        df = {'param_name': [],
+              'param_val': [],
+              'test_name': [],
+              'test_version': [],
+              'test_args': [],
+              'test_desc': [],
+              'metric_units': [],
+              'metric_mean': [],
+              'metric_data': [],
+              }
+
+        for entry in r:
+            param, test_list = entry
+
+            for test in test_list:
+                df['param_name'].append(list(param.keys())[0])
+                df['param_val'].append(list(param.values())[0])
+
+                df['test_name'].append(test['Title'])
+                df['test_version'].append(test['AppVersion'])
+                df['test_args'].append(test['Arguments'])
+                df['test_desc'].append(test['Description'])
+
+                df['metric_units'].append(test['Scale'])
+                df['metric_mean'].append(test['Data']['value'])
+                df['metric_data'].append(test['Data']['raw_values'])
+
+        return pd.DataFrame(df)
+
+    def plot_stats(self, df, save_loc):
+        if not os.path.exists(save_loc):
+            os.makedirs(save_loc)
+
+        #max_over_min
+        #default param, default val
+        #error bars
+
+        max_over_min = []
+        for param_name in df['param_name'].unique(): #parameters scanned
+            for test_name in df['test_name'].unique(): #Redis
+                for test_desc in df['test_desc'].unique(): #SADD, LPOP etc.
+
+                    d = df[(df['param_name']==param_name) & (df['test_name']==test_name) & (df['test_desc']==test_desc)].copy()
+
+                    d.sort_values('param_val', ascending=True, inplace=True)
+
+                    #plotting
+                    units = d['metric_units'].unique()
+                    if len(units) > 1:
+                        raise ValueError("Found multiple metrics")
+                    units = units[0]
+
+                    plt.clf()
+                    plt.plot(d['param_val'], d['metric_mean'], 'p-')
+                    plt.xlabel(param_name)
+                    plt.ylabel(units)
+                    plt.title(f'{test_name} : {test_desc}')
+
+                    plt.savefig(f'{save_loc}/{param_name}_{test_name}_{test_desc.replace(": ", "_")}.png')
+
+                    #metrics
+                    max_over_min_str = f"{param_name},{test_name},{test_desc},{d['metric_mean'].max()/d['metric_mean'].min()}"
+                    max_over_min.append(max_over_min_str)
+
+        with open(f'{save_loc}/max_over_min', 'w') as f:
+            for m in max_over_min:
+                print(m, file=f)
 
 class Annealing:
     def __init__(self, client, metric):

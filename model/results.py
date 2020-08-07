@@ -30,7 +30,10 @@ def parse_xml(xml_file):
 						if entry.tag=='Value':
 							data['value'] = float(entry.text)
 						if entry.tag=='RawString':
-							data['raw_values'] = [float(i) for i in entry.text.split(":")]
+							if entry.text is not None:
+								data['raw_values'] = [float(i) for i in entry.text.split(":")]
+							else:
+								data['raw_values'] = entry.text
 			else:
 				data = elem.text
 

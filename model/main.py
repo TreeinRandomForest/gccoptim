@@ -43,8 +43,7 @@ def run(params):
         if counter % prune_freq == 0:
             client.containers.prune()
 
-def run_scan(params, 
-             metric_name, 
+def run_scan(metric_name, 
              metric_min, 
              metric_max, 
              metric_step_size, 
@@ -60,6 +59,30 @@ def run_scan(params,
                               N_parallel=N_parallel)
 
     return scanner, clist
+
+def run_full_scan(params):
+  skipped = 0
+  for p in params:
+    p_min = params[p]['minimum']
+    p_max = params[p]['maximum']
+
+    if p_min==p_max:
+      skipped += 1
+      continue
+
+    N_unique = (p_max-p_min+1)
+    
+    if N_unique > 50:
+      p_step_size = int(N_unique / 50.)
+    else: 
+      p_step_size = 1
+
+    print(p, p_min, p_max, p_step_size)
+
+    scanner, clist = run_scan(p, p_min, p_max, p_step_size, N_parallel=6)
+
+  print(f"Skipped {skipped} params with p_max==p_min")
+
 
 if __name__=="__main__":
     params = paramset.read_options()
