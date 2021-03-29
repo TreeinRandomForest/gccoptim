@@ -150,7 +150,15 @@ class FullScan:
                     units = units[0]
 
                     plt.clf()
-                    plt.plot(d['param_val'], d['metric_mean'], 'p-')
+                    
+                    #plt.plot(d['param_val'], d['metric_mean'], 'p-')
+                    e = d[d['metric_data'].apply(lambda x: x is None)]
+
+                    d_min = d['metric_data'].apply(np.min)
+                    d_max = d['metric_data'].apply(np.max)
+                    err = np.array(pd.concat([d_min, d_max], axis=1).T)                    
+                    plt.errorbar(d['param_val'], d['metric_mean'], yerr=yerr, fmt='p-')
+
                     plt.xlabel(param_name)
                     plt.ylabel(units)
                     if params is not None:
