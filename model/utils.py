@@ -5,17 +5,26 @@ import shutil
 import numpy as np
 
 def get_client():
+    '''Interface to the docker API
+    '''
     client = docker.from_env()
 
     return client
 
 def generate_container_name():
+    '''Want containers to have unique names
+    '''
+
     return ''.join([chr(i) for i in np.random.choice(np.concatenate([np.arange(65, 91), np.arange(97, 123)]), size=8)])
 
 def check_test_suite_finished(container_list):
+    '''Wait till containers have finished running
+    '''
     [container.wait() for container in container_list]
 
 def read_params_from_file(params_filename):
+    '''Parse compiler parameter values from file into dictionary
+    '''
     params = {}
     with open(params_filename, 'r') as f:
         for line in f:
@@ -28,12 +37,16 @@ def read_params_from_file(params_filename):
     return params
 
 def write_params_to_file(params, param_filename):
+    '''Write compiler parameter values from dictionary to file
+    '''
     with open(param_filename, 'w') as f:
         for elem in params:
             print(f'--param {elem}={params[elem]}', file=f)
 
 def run_test_suite(container_name, params, client):
-    #useful locations
+    '''Run test suite in container with params
+    '''
+
     local_store = os.path.join(config.Storage.volume_loc, container_name)
     container_store = config.Storage.test_container_loc
 
@@ -56,5 +69,7 @@ def run_test_suite(container_name, params, client):
     return container
 
 def write_logs(container, outfile):
+    '''Write out logs before stopping container
+    '''
     with open(outfile, 'w') as f:
         printf(container.logs(), file=f)

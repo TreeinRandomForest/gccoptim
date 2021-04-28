@@ -10,13 +10,15 @@ from utils import (check_test_suite_finished,
                   read_params_from_file, write_params_to_file,
                   run_test_suite)
 
-def stopping_criterion(counter):
+def stopping_criterion(counter):    
     if counter==3:
         return False
 
     return True
 
 def run(params):
+    '''Generic run functin
+    '''
     counter = 0
 
     client = docker.from_env()
@@ -43,11 +45,14 @@ def run(params):
         if counter % prune_freq == 0:
             client.containers.prune()
 
-def run_scan(metric_name, 
-             metric_min, 
-             metric_max, 
-             metric_step_size, 
-             N_parallel=1):
+def run_scan_one_metric(metric_name, 
+                        metric_min, 
+                        metric_max, 
+                        metric_step_size, 
+                        N_parallel=1):
+
+    '''Run experiment for one metric in a certain range
+    '''
 
     scanner = model.FullScan()
 
@@ -61,6 +66,8 @@ def run_scan(metric_name,
     return scanner, clist
 
 def run_full_scan(params):
+  '''Run experiments over all parameters
+  '''
   skipped = 0
   for p in params:
     p_min = params[p]['minimum']
@@ -79,7 +86,7 @@ def run_full_scan(params):
 
     print(p, p_min, p_max, p_step_size)
 
-    scanner, clist = run_scan(p, p_min, p_max, p_step_size, N_parallel=6)
+    scanner, clist = run_scan_one_metric(p, p_min, p_max, p_step_size, N_parallel=6)
 
   print(f"Skipped {skipped} params with p_max==p_min")
 
@@ -87,4 +94,4 @@ def run_full_scan(params):
 if __name__=="__main__":
     params = paramset.read_options()
 
-    #run(params)
+    #run_full_scan(params) #will trigger experiments for every param for the full range

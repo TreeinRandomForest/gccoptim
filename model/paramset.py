@@ -46,8 +46,6 @@ def parse_params(params_desc, params_range):
 
     return params
 
-#[1,2,4,8] -> [T,T,F,F] -> max between 2-4
-
 def test_success(container_name):
     return True
 
