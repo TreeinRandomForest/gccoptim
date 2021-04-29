@@ -38,42 +38,66 @@ In the simplest setup, we repeat two steps indefinitely:
 __init__.py: regular imports
 
 main.py:
+    
     run_scan_one_metric -> loop over all unique values and run test-suite
+    
     run_full_scan -> calls run_scan_one_metric for all metrics
 
 config.py:
+    
     #TODO: relative paths instead of absolute paths
+    
     Global variables stored here
+    
     Containers.test_image -> gcc_testsuite
+    
     Storage.volume_loc -> store/dynamic
+    
     Storage.test_container_loc -> /home/user/store
+    
     Storage.test_script -> container-testsuite/run_experiments.sh
+    
     Storage.user_config -> store/user-config.xml
 
 paramset.py
+    
     read_options -> gcc --version output
+    
     get_gcc_params -> gcc --help=params and gcc --help=params -Q
+    
     parse_version -> just cleaning version number
+    
     parse_params -> return dictionary of params, descriptions and ranges
+    
     test_success -> returns True for now
+    
     search_range and binary_search -> don't need?
 
 results.py:
     Should this be in utils?
 
     read_results -> read XML file (used in model.py)
+    
     parse_xml -> parse XML file
 
 utils.py:
+    
     get_client: get docker client
+    
     generate_container_name
+    
     check_test_suite_finished
+    
     read_params_from_file
+    
     write_params_to_file
+    
     run_test_suite
+    
     write_logs
 
 visualization.py:
+    
     ignore for now
 
 ### 
