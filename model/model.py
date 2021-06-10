@@ -21,7 +21,7 @@ class FullScan:
         metric_max, 
         metric_step_size, 
         container_tag, 
-        N_parallel=3
+        N_parallel=1
         ):
         
         assert(N_parallel >= 0)

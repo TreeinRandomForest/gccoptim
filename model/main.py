@@ -1,6 +1,6 @@
 import numpy as np
 import model, config, paramset, results
-import docker
+import podman as docker
 import time
 import shutil
 import glob
@@ -17,11 +17,14 @@ def stopping_criterion(counter):
     return True
 
 def run(params):
-    '''Generic run functin
+    '''Generic run function
+    TODO: confirm this function not needed
+    and logic can be now decoupled from container details
     '''
     counter = 0
 
-    client = docker.from_env()
+    #client = docker.from_env()
+    client = docker.PodmanClient(config.Podman.base_url)
     prune_freq = 100
 
     while stopping_criterion(counter):

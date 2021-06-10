@@ -12,12 +12,16 @@ class RLModel:
 class Scan:
 	pass
 
-class Storage:
-	volume_loc = '/home/sanjay/GCCOptimization/gccoptim/store/dynamic'
-	test_container_loc = '/home/user/store'
+class Podman:
+	base_url = 'tcp:localhost:8080'
 
-	test_script = '/home/sanjay/GCCOptimization/gccoptim/container-testsuite/run_experiments.sh'
-	user_config = '/home/sanjay/GCCOptimization/gccoptim/store/user-config.xml'
+class Storage:
+	volume_loc = '/home/sanjay/GCCOptimization/gccoptim/store/dynamic_O3' #all logs and results written here
+	test_container_loc = '/home/user/store' #mount point in container namespace
+
+	#both of these are copied to the container using a shared volume
+	test_script = '/home/sanjay/GCCOptimization/gccoptim/container-testsuite/run_experiments.sh' #local script to run
+	user_config = '/home/sanjay/GCCOptimization/gccoptim/store/user-config.xml' #local user config
 
 class Containers:
 	test_image = 'gcc_testsuite'

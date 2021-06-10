@@ -35,14 +35,19 @@ def parse_version(gcc_version):
 
 def parse_params(params_desc, params_range):
     #get ranges
-    params_range = [l.strip().split() for l in params_range.split(os.linesep) if len(l)!=0 and l.find('--param')==-1]
-    params = dict([
-                    (opt[0], 
-                     dict(zip(opt[1::2], [int(i) for i in opt[2::2]]))
-                    )
-                    for opt in params_range])
+    params_desc = [l.strip().split()[0].split('=')[1:] for l in params_desc.split(os.linesep) if l.find('--param')>-1]
+    params = {}
+    for param in params_desc:
+        if len(param[1]) > 0 and param[1].find('<')>-1: #TODO: ignoring categorical for now. bandits later. ignoring params without range
+            low, high = param[1].replace('<', '').replace('>', '').split(',')
+            
+            params[param[0]] = {'minimum': int(low), 'maximum': int(high)}
 
-    #ignore descriptions for now
+    #params = dict([
+    #                (opt[0], 
+    #                 []#dict(zip(opt[1::2], [int(i) for i in opt[2::2]]))
+    #                )
+    #                for opt in params_range])
 
     return params
 

@@ -1,13 +1,15 @@
 import config
 import os
-import docker
+import podman as docker
 import shutil
 import numpy as np
+import subprocess
 
 def get_client():
     '''Interface to the docker API
     '''
-    client = docker.from_env()
+    #client = docker.from_env()
+    client = docker.PodmanClient(base_url=config.Podman.base_url)
 
     return client
 
@@ -60,11 +62,28 @@ def run_test_suite(container_name, params, client):
     shutil.copy(config.Storage.user_config, local_store)
     shutil.copy(config.Storage.test_script, local_store)
 
-    container = client.containers.run(config.Containers.test_image,
-                                      'bash /home/user/store/run_experiments.sh',
-                                      detach=True,
-                                      name=container_name,
-                                      volumes={local_store : {'bind': container_store, 'mode': 'rw'}}) 
+    script_name = config.Storage.test_script.split('/')[-1]
+
+   #'podman run -it --name blah --volume ./:/folder:Z gcc_testsuite /bin/bash'
+    #c = subprocess.check_output('podman run --name blahbloo4 -d --volume ./:/folder gcc_testsuite sleep 60', shel
+    #...: l=True)
+
+    container = subprocess.Popen(['podman', 
+                                 'run',
+                                 f'--name {container_name}',
+                                 f'--volume {local_store}:{container_store}:Z',
+                                 '-d',
+                                 config.Containers.test_image,
+                                 f'bash {config.Storage.test_container_loc}/{script_name}'                                                
+                                ], stdout=subprocess.PIPE) 
+
+    '''
+    container = client.containers.create(config.Containers.test_image,
+                                         f'bash {config.Storage.test_container_loc}/{script_name}',
+                                         detach=True,
+                                         name=container_name,
+                                         volumes={local_store : {'bind': container_store, 'mode': 'rw'}}) 
+    '''
 
     return container
 

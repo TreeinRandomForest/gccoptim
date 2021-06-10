@@ -10,10 +10,11 @@ cp $STORE_LOC/user-config.xml /etc/phoronix-test-suite.xml
 $TEST_LOC/phoronix-test-suite/phoronix-test-suite enterprise-setup
 
 PARAMFILE=$STORE_LOC/PARAMS
-export CFLAGS="-frecord-gcc-switches @${PARAMFILE}" #specific to redis
+export CFLAGS="-frecord-gcc-switches -O3 @${PARAMFILE}" #specific to redis
 echo $PARAMFILE
 echo $CFLAGS
 
+#look at bash scripts for test to ensure gcc is being used
 cd $TEST_LOC/phoronix-test-suite && ./phoronix-test-suite batch-benchmark redis #specific to redis
 
 mv $TEST_LOC/.phoronix-test-suite/test-results $STORE_LOC #test results
