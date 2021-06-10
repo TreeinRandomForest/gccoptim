@@ -1,6 +1,5 @@
 import numpy as np
 import model, config, paramset, results
-import podman as docker
 import time
 import shutil
 import glob
@@ -15,38 +14,6 @@ def stopping_criterion(counter):
         return False
 
     return True
-
-def run(params):
-    '''Generic run function
-    TODO: confirm this function not needed
-    and logic can be now decoupled from container details
-    '''
-    counter = 0
-
-    #client = docker.from_env()
-    client = docker.PodmanClient(config.Podman.base_url)
-    prune_freq = 100
-
-    while stopping_criterion(counter):
-        counter += 1
-
-        #generate params
-        params_to_try = generate_param_set(params, counter)
-
-        #create dir for shared volume
-        container_name = generate_container_name()
-
-        container = run_test_suite(container_name, client)
-
-        print(container)
-
-        check_test_suite_finished([container])
-
-        with open(os.path.join(storage_loc, 'logs'), 'w') as f:
-            print(container.logs().decode(), file=f)
-
-        if counter % prune_freq == 0:
-            client.containers.prune()
 
 def run_scan_one_metric(metric_name, 
                         metric_min, 

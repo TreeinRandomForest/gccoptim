@@ -1,17 +1,8 @@
 import config
 import os
-import podman as docker
 import shutil
 import numpy as np
 import subprocess
-
-def get_client():
-    '''Interface to the docker API
-    '''
-    #client = docker.from_env()
-    client = docker.PodmanClient(base_url=config.Podman.base_url)
-
-    return client
 
 def generate_container_name():
     '''Want containers to have unique names
@@ -22,7 +13,18 @@ def generate_container_name():
 def check_test_suite_finished(container_list):
     '''Wait till containers have finished running
     '''
-    [container.wait() for container in container_list]
+    #[container.wait() for container in container_list]
+    current_container_list = subprocess.Popen(['podman',
+                                               'ps',
+                                               '-aq'],
+                                               stdout=subprocess.PIPE)
+    current_container_list = [x.decode('utf-8').rstrip('\n') for x in current_container_list.stdout.readlines()]
+    
+    for container_id in container_list:
+        if container_id not in current_container_list:
+            raise ValueError(f'container {container_id} not found in list {container_list}')
+        
+        subprocess.call(['podman', 'wait', container_id])
 
 def read_params_from_file(params_filename):
     '''Parse compiler parameter values from file into dictionary
@@ -45,7 +47,7 @@ def write_params_to_file(params, param_filename):
         for elem in params:
             print(f'--param {elem}={params[elem]}', file=f)
 
-def run_test_suite(container_name, params, client):
+def run_test_suite(container_name, params):
     '''Run test suite in container with params
     '''
 
@@ -79,8 +81,10 @@ def run_test_suite(container_name, params, client):
                                  'bash',
                                  f'{config.Storage.test_container_loc}/{script_name}'
                                 ], stdout=subprocess.PIPE) 
+    #import ipdb
+    #ipdb.set_trace()
 
-    return container
+    return container.stdout.readlines()[0][0:12].decode('utf-8')
 
 def write_logs(container, outfile):
     '''Write out logs before stopping container

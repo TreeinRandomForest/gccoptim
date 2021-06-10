@@ -7,13 +7,10 @@ import config
 import results
 from utils import (check_test_suite_finished, generate_container_name,
                   read_params_from_file, write_params_to_file,
-                  run_test_suite, get_client)
+                  run_test_suite)
 plt.ion()
 
 class FullScan:
-    def __init__(self):
-        self.client = get_client()
-
     def full_scan(
         self,
         metric_name, 
@@ -36,7 +33,7 @@ class FullScan:
             print(f'Container Name: {container_name}')
             print(f'Params = {params}\n')
 
-            container = run_test_suite(container_name, params, self.client)
+            container = run_test_suite(container_name, params)
 
             container_list.append(container)
 
@@ -175,15 +172,14 @@ class FullScan:
                 print(m, file=f)
 
 class Annealing:
-    def __init__(self, client, metric):
-        self.client = client
+    def __init__(self, metric):
         self.metric = metric
 
     def estimate_init_temperature(self, N_tries):
         for _ in range(N_tries):
             params = generate_init_params()
             container_name = generate_container_name()
-            container = run_test_suite(container_name, params_current, client)
+            container = run_test_suite(container_name, params_current)
             check_test_suite_finished([container])
             res_current = self.read_result(container_name)
 
@@ -211,7 +207,7 @@ class Annealing:
 
         params_current = generate_init_params()
         container_name = generate_container_name()
-        container = run_test_suite(container_name, params_current, client)
+        container = run_test_suite(container_name, params_current)
         check_test_suite_finished([container])
         res_current = self.read_result(container_name)
 
@@ -221,7 +217,7 @@ class Annealing:
 
             params_candidate = get_neighbor(params_current)
             container_name = generate_container_name()
-            container = run_test_suite(container_name, params_candidate, client)
+            container = run_test_suite(container_name, params_candidate)
             check_test_suite_finished([container])
             res_candidate = self.read_result(container_name)
 
