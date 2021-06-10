@@ -232,3 +232,9 @@ class Annealing:
 
             if counter % prune_freq == 0:
                 client.containers.prune()
+
+class BayesOpt:
+    pass
+
+class PolicyGradient:
+    pass
