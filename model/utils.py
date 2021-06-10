@@ -64,26 +64,21 @@ def run_test_suite(container_name, params, client):
 
     script_name = config.Storage.test_script.split('/')[-1]
 
-   #'podman run -it --name blah --volume ./:/folder:Z gcc_testsuite /bin/bash'
-    #c = subprocess.check_output('podman run --name blahbloo4 -d --volume ./:/folder gcc_testsuite sleep 60', shel
-    #...: l=True)
-
+    cmd = f"podman run --name {container_name} --volume {local_store}:{container_store}:Z \
+           -d {config.Containers.test_image} bash {config.Storage.test_container_loc}/{script_name}"
+    print(f"Running command:\n {cmd}")
+    
     container = subprocess.Popen(['podman', 
                                  'run',
-                                 f'--name {container_name}',
-                                 f'--volume {local_store}:{container_store}:Z',
+                                 '--name',
+                                 container_name,
+                                 '--volume',
+                                 f'{local_store}:{container_store}:Z',
                                  '-d',
                                  config.Containers.test_image,
-                                 f'bash {config.Storage.test_container_loc}/{script_name}'                                                
+                                 'bash',
+                                 f'{config.Storage.test_container_loc}/{script_name}'
                                 ], stdout=subprocess.PIPE) 
-
-    '''
-    container = client.containers.create(config.Containers.test_image,
-                                         f'bash {config.Storage.test_container_loc}/{script_name}',
-                                         detach=True,
-                                         name=container_name,
-                                         volumes={local_store : {'bind': container_store, 'mode': 'rw'}}) 
-    '''
 
     return container
 
