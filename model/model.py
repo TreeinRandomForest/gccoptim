@@ -5,6 +5,7 @@ import matplotlib.pylab as plt
 import os
 import config
 import results
+import subprocess
 from utils import (check_test_suite_finished, generate_container_name,
                   read_params_from_file, write_params_to_file,
                   run_test_suite)
@@ -227,7 +228,8 @@ class Annealing:
                 params_current = params_candidate
 
             if counter % prune_freq == 0:
-                client.containers.prune()
+                #client.containers.prune()
+                subprocess.Popen(['podman', 'container', 'prune', '-f'], stdout=subprocess.PIPE)
 
 class BayesOpt:
     pass
