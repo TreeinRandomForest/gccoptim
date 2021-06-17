@@ -6,6 +6,8 @@ import os
 import config
 import results
 import subprocess
+from dragonfly import load_config, maximize_function
+
 from utils import (check_test_suite_finished, generate_container_name,
                   read_params_from_file, write_params_to_file,
                   run_test_suite)
@@ -232,7 +234,84 @@ class Annealing:
                 subprocess.Popen(['podman', 'container', 'prune', '-f'], stdout=subprocess.PIPE)
 
 class BayesOpt:
-    pass
+    def __init__(self, experiment_tag):
+        self.iter = 0
+        self.experiment_tag = experiment_tag
+
+    def generate_domain(self, params):
+        domain = []
+        for p in params:
+            #add filter here if don't want to tune all params
+
+            info = params[p]
+
+            if info['type']=='int':
+                desc = {'name': p,
+                        'type': 'int'
+                        'min': info['minimum'],
+                        'max': info['maximum']
+                        }
+
+            elif info['type']=='discrete':
+                desc = {'name': p,
+                        'type': 'discrete',
+                        'items': info['items']        
+                       }
+
+            domain.append(desc)
+
+        config = load_config({'domain': domain})
+
+        return config
+
+    def objective(self, param_vals):
+        #generate params file
+        container_name = generate_container_name()
+        container_name = f'{self.experiment_tag}_{container_name}_{self.iter}'
+
+        print(f'Container Name: {container_name}')
+
+        params = param_vals
+
+        container = run_test_suite(container_name, params)
+
+        check_test_suite_finished([container])
+        
+        res_params, res = self.read_experiment_results(container_name)
+
+        self.iter += 1
+
+        #res_numeric =
+
+        return res_numeric
+
+    def read_experiment_results(self, container_name):
+        res_loc = glob.glob(f'{container_name}/test-results/*')
+            
+        if len(res_loc) > 1:
+            raise ValueError(f"Found Multiple Results: {res_loc}")
+        if len(res_loc) == 0:
+            print(f'Found No Results: {d}')
+            continue
+
+        res_loc = res_loc[0]
+
+        param_file = f'{d}/PARAMS'
+        
+        try:
+            current_params = read_params_from_file(param_file)
+            current_res = results.read_results(res_loc)
+        except:
+            print(d)
+
+        return current_params, current_res
+
+    def optimization_loop(self, config, capital=10):
+        val, point, history = maximize_function(self.objective,
+                                                config.domain,
+                                                capital,
+                                                config=config)
+
 
 class PolicyGradient:
     pass
