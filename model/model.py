@@ -154,7 +154,7 @@ class FullScan:
 
                     d_min = d['metric_data'].apply(np.min)
                     d_max = d['metric_data'].apply(np.max)
-                    err = np.array(pd.concat([d_min, d_max], axis=1).T)                    
+                    yerr = np.array(pd.concat([d_min, d_max], axis=1).T)                    
                     plt.errorbar(d['param_val'], d['metric_mean'], yerr=yerr, fmt='p-')
 
                     plt.xlabel(param_name)
