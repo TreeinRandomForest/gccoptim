@@ -76,7 +76,7 @@ portalocker==1.5.2
 profilehooks==1.11.2
 prometheus-client==0.7.1
 prompt-toolkit==3.0.3
-protobuf==3.11.3
+protobuf==3.18.3
 protobuf-compiler==1.0.20
 ptyprocess==0.6.0
 pyasn1==0.4.8
